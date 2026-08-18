@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mfumo wa Vitambulisho | ID Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #D4A843;
+    --gold-light: #F0CC7A;
+    --navy: #0B1E3D;
+    --navy-mid: #162D55;
+    --navy-light: #1E3D6E;
+    --white: #F9F7F2;
+    --cream: #F2EDE3;
+    --red-accent: #C0392B;
+    --success: #27AE60;
+    --text-muted: #8A9BB5;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--navy);
+    color: var(--white);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(212,168,67,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 80%, rgba(30,61,110,0.6) 0%, transparent 60%),
+      repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(255,255,255,0.01) 40px, rgba(255,255,255,0.01) 41px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrapper { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+  /* HEADER */
+  header {
+    text-align: center;
+    padding: 40px 20px 30px;
+    position: relative;
+  }
+  header::after {
+    content: '';
+    display: block;
+    width: 120px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 20px auto 0;
+  }
+  .header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(212,168,67,0.1);
+    border: 1px solid rgba(212,168,67,0.3);
+    color: var(--gold-light);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border-radius: 100px;
+    margin-bottom: 16px;
+  }
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 900;
+    line-height: 1.1;
+    background: linear-gradient(135deg, var(--white) 30%, var(--gold-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  header p {
+    color: var(--text-muted);
+    font-size: 14px;
+    margin-top: 10px;
+    font-weight: 300;
+  }
+
+  /* STEPS */
+  .steps {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    margin: 30px 0;
+    position: relative;
+  }
+  .steps::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+  }
+  .step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    max-width: 150px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .step-icon {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: var(--navy-mid);
+    border: 2px solid rgba(212,168,67,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    transition: all 0.3s;
+    position: relative;
+    z-index: 1;
+  }
+  .step.active .step-icon {
+    background: var(--gold);
+    border-color: var(--gold);
+    box-shadow: 0 0 20px rgba(212,168,67,0.4);
+  }
+  .step.done .step-icon {
+    background: var(--success);
+    border-color: var(--success);
+  }
+  .step-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    transition: color 0.3s;
+  }
+  .step.active .step-label { color: var(--gold-light); }
+  .step.done .step-label { color: var(--success); }
+
+  /* MAIN LAYOUT */
+  .main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 20px;
+  }
+
+  @media (max-width: 768px) {
+    .main { grid-template-columns: 1fr; }
+  }
+
+  /* PANELS */
+  .panel {
+    background: rgba(22,45,85,0.6);
+    border: 1px solid rgba(212,168,67,0.15);
+    border-radius: 20px;
+    padding: 28px;
+    backdrop-filter: blur(10px);
+    transition: border-color 0.3s;
+  }
+  .panel:hover { border-color: rgba(212,168,67,0.3); }
+
+  .panel-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(212,168,67,0.1);
+  }
+  .panel-title .icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--gold), #B8860B);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .panel-title h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--white);
+  }
+  .panel-title p { font-size: 12px; color: var(--text-muted); }
+
+  /* CAMERA SECTION */
+  .camera-area {
+    position: relative;
+    background: var(--navy);
+    border: 2px dashed rgba(212,168,67,0.2);
+    border-radius: 16px;
+    overflow: hidden;
+    aspect-ratio: 4/3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.3s;
+  }
+  .camera-area.active-cam { border-color: var(--gold); border-style: solid; }
+  .camera-area.has-photo { border-color: var(--success); border-style: solid; }
+
+  #videoEl {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: none;
+    border-radius: 14px;
+  }
+  #photoCanvas { display: none; }
+  #photoPreview {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: none;
+    border-radius: 14px;
+  }
+
+  .camera-placeholder {
+    text-align: center;
+    padding: 20px;
+  }
+  .camera-placeholder .cam-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+    opacity: 0.4;
+    display: block;
+  }
+  .camera-placeholder p {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  /* Corner decorations for camera */
+  .camera-area::before, .camera-area::after {
+    content: '';
+    position: absolute;
+    width: 20px; height: 20px;
+    border-color: var(--gold);
+    border-style: solid;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 2;
+  }
+  .camera-area::before { top: 8px; left: 8px; border-width: 2px 0 0 2px; border-radius: 4px 0 0 0; }
+  .camera-area::after { bottom: 8px; right: 8px; border-width: 0 2px 2px 0; border-radius: 0 0 4px 0; }
+  .camera-area.active-cam::before, .camera-area.active-cam::after { opacity: 1; }
+
+  .cam-status {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(192,57,43,0.9);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 4px 10px;
+    border-radius: 100px;
+    display: none;
+    align-items: center;
+    gap: 5px;
+    z-index: 3;
+  }
+  .cam-status.live { display: flex; background: rgba(192,57,43,0.9); }
+  .cam-status .dot {
+    width: 6px; height: 6px;
+    background: #ff4444;
+    border-radius: 50%;
+    animation: blink 1s infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+  /* CAMERA BUTTONS */
+  .cam-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .btn {
+    padding: 12px 16px;
+    border: none;
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    letter-spacing: 0.3px;
+  }
+  .btn-gold {
+    background: linear-gradient(135deg, var(--gold), #B8860B);
+    color: var(--navy);
+  }
+  .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(212,168,67,0.35); }
+  .btn-gold:active { transform: translateY(0); }
+
+  .btn-outline {
+    background: transparent;
+    border: 1.5px solid rgba(212,168,67,0.3);
+    color: var(--gold-light);
+  }
+  .btn-outline:hover { border-color: var(--gold); background: rgba(212,168,67,0.05); }
+
+  .btn-danger {
+    background: rgba(192,57,43,0.15);
+    border: 1.5px solid rgba(192,57,43,0.3);
+    color: #E74C3C;
+  }
+  .btn-danger:hover { background: rgba(192,57,43,0.25); }
+
+  .btn-success {
+    background: linear-gradient(135deg, #27AE60, #1E8449);
+    color: white;
+    grid-column: 1 / -1;
+    padding: 14px;
+    font-size: 14px;
+  }
+  .btn-success:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(39,174,96,0.35); }
+
+  /* UPLOAD AREA */
+  .upload-area {
+    margin-top: 14px;
+    border: 1.5px dashed rgba(212,168,67,0.2);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+  }
+  .upload-area:hover { border-color: var(--gold); background: rgba(212,168,67,0.03); }
+  .upload-area input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
+  .upload-area p { font-size: 12px; color: var(--text-muted); }
+  .upload-area span { color: var(--gold-light); font-weight: 600; }
+
+  /* FORM SECTION */
+  .form-grid { display: grid; gap: 14px; }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  .field label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .field input, .field select {
+    width: 100%;
+    background: rgba(11,30,61,0.6);
+    border: 1.5px solid rgba(212,168,67,0.15);
+    border-radius: 10px;
+    padding: 11px 14px;
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    transition: all 0.2s;
+    outline: none;
+    -webkit-appearance: none;
+  }
+  .field input:focus, .field select:focus {
+    border-color: var(--gold);
+    background: rgba(11,30,61,0.9);
+    box-shadow: 0 0 0 3px rgba(212,168,67,0.1);
+  }
+  .field select option { background: var(--navy-mid); color: var(--white); }
+
+  .field input::placeholder { color: rgba(138,155,181,0.5); }
+
+  /* Color picker for card theme */
+  .color-picker-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-top: 6px;
+  }
+  .color-opt {
+    height: 36px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .color-opt.selected {
+    border-color: white;
+    transform: scale(0.9);
+  }
+  .color-opt.selected::after {
+    content: '✓';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  }
+
+  /* GENERATE BUTTON */
+  .generate-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--gold), #B8860B);
+    color: var(--navy);
+    border: none;
+    border-radius: 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+  }
+  .generate-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.5s;
+  }
+  .generate-btn:hover::before { transform: translateX(100%); }
+  .generate-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(212,168,67,0.4); }
+
+  /* CARD PREVIEW AREA */
+  .preview-section {
+    margin-top: 30px;
+    animation: slideUp 0.5s ease;
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .preview-title {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .preview-title h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--gold-light);
+  }
+  .preview-title p { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+
+  .cards-container {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* THE ID CARD */
+  .id-card {
+    width: 340px;
+    height: 215px;
+    border-radius: 18px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05);
+    transition: transform 0.3s;
+    flex-shrink: 0;
+  }
+  .id-card:hover { transform: perspective(800px) rotateY(-5deg) rotateX(3deg) scale(1.02); }
+
+  /* Card back */
+  .id-card-back {
+    width: 340px;
+    height: 215px;
+    border-radius: 18px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+    flex-shrink: 0;
+  }
+
+  .card-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .card-noise {
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    background-size: 200px;
+    opacity: 0.5;
+    z-index: 1;
+  }
+
+  .card-content { position: relative; z-index: 2; padding: 16px 18px; height: 100%; display: flex; flex-direction: column; }
+
+  /* Card header */
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .org-info { display: flex; align-items: center; gap: 8px; }
+  .org-logo {
+    width: 30px; height: 30px;
+    background: rgba(255,255,255,0.9);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+  .org-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.9);
+    line-height: 1.1;
+  }
+  .org-sub {
+    font-size: 8px;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .card-type {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.1);
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+
+  /* Divider line */
+  .card-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    margin-bottom: 10px;
+  }
+
+  /* Card body */
+  .card-body { display: flex; gap: 14px; flex: 1; }
+
+  .card-photo {
+    width: 72px; height: 90px;
+    border-radius: 10px;
+    object-fit: cover;
+    border: 2px solid rgba(255,255,255,0.2);
+    flex-shrink: 0;
+    background: rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    overflow: hidden;
+  }
+  .card-photo img { width: 100%; height: 100%; object-fit: cover; }
+
+  .card-details { flex: 1; }
+  .card-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: white;
+    line-height: 1.2;
+    margin-bottom: 2px;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+  .card-position {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 8px;
+  }
+
+  .card-info-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 4px;
+  }
+  .card-info-icon { font-size: 9px; opacity: 0.6; width: 12px; }
+  .card-info-text { font-size: 10px; color: rgba(255,255,255,0.75); }
+
+  /* Card footer */
+  .card-footer {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-top: auto;
+    padding-top: 6px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+  .card-id-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 13px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.5);
+  }
+  .card-validity {
+    font-size: 9px;
+    color: rgba(255,255,255,0.5);
+    text-align: right;
+  }
+  .card-validity span { display: block; color: rgba(255,255,255,0.8); font-weight: 600; }
+
+  /* Barcode */
+  .card-barcode {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 7px;
+    letter-spacing: 0;
+    color: rgba(255,255,255,0.15);
+    line-height: 0.9;
+    font-size: 16px;
+  }
+
+  /* Holographic shimmer */
+  .card-hologram {
+    position: absolute;
+    bottom: 12px;
+    right: 14px;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, #ff0080, #ff8c00, #40e0d0, #ff0080);
+    opacity: 0.25;
+    animation: holo-spin 3s linear infinite;
+  }
+  @keyframes holo-spin { to { transform: rotate(360deg); } }
+
+  /* CARD BACK */
+  .back-stripe {
+    position: absolute;
+    top: 40px;
+    left: 0; right: 0;
+    height: 42px;
+    background: rgba(0,0,0,0.6);
+  }
+  .back-content { position: relative; z-index: 2; padding: 16px 18px; }
+  .back-content .back-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: rgba(255,255,255,0.4);
+    margin-top: 50px;
+    margin-bottom: 6px;
+  }
+  .signature-line {
+    height: 30px;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: flex-end;
+    padding-bottom: 4px;
+  }
+  .sig-text { font-size: 10px; color: rgba(255,255,255,0.3); }
+  .back-info-text {
+    font-size: 9px;
+    color: rgba(255,255,255,0.4);
+    line-height: 1.5;
+    max-width: 200px;
+  }
+  .back-qr {
+    position: absolute;
+    bottom: 16px;
+    right: 18px;
+    width: 60px; height: 60px;
+    background: white;
+    border-radius: 6px;
+    display: grid;
+    grid-template-columns: repeat(5,1fr);
+    gap: 2px;
+    padding: 6px;
+  }
+  .qr-cell {
+    border-radius: 1px;
+  }
+
+  /* ACTION BUTTONS */
+  .action-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+  .action-btn {
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+  }
+  .action-btn.print {
+    background: linear-gradient(135deg, var(--gold), #B8860B);
+    color: var(--navy);
+  }
+  .action-btn.print:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(212,168,67,0.4); }
+  .action-btn.new {
+    background: rgba(22,45,85,0.8);
+    border: 1.5px solid rgba(212,168,67,0.3);
+    color: var(--gold-light);
+  }
+  .action-btn.new:hover { border-color: var(--gold); }
+  .action-btn.download {
+    background: rgba(39,174,96,0.15);
+    border: 1.5px solid rgba(39,174,96,0.3);
+    color: #2ECC71;
+  }
+  .action-btn.download:hover { background: rgba(39,174,96,0.25); }
+
+  /* NOTIFICATION */
+  .notif {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #27AE60, #1E8449);
+    color: white;
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 1000;
+    transform: translateX(150%);
+    transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  }
+  .notif.show { transform: translateX(0); }
+
+  /* THEMES */
+  .theme-navy { background: linear-gradient(135deg, #0B1E3D, #162D55, #0B1E3D); }
+  .theme-gold { background: linear-gradient(135deg, #6B4A00, #D4A843, #8B6914); }
+  .theme-burgundy { background: linear-gradient(135deg, #4A0010, #8B0020, #4A0010); }
+  .theme-forest { background: linear-gradient(135deg, #0D2B1A, #1A5C38, #0D2B1A); }
+  .theme-slate { background: linear-gradient(135deg, #1A1A2E, #16213E, #0F3460); }
+
+  /* LOADING */
+  .loading {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+    padding: 8px;
+    color: var(--gold-light);
+    font-size: 13px;
+  }
+  .spinner {
+    width: 16px; height: 16px;
+    border: 2px solid rgba(212,168,67,0.2);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* SECTION TOGGLE */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* HIDDEN */
+  #previewSection { display: none; }
+
+  @media print {
+    body * { visibility: hidden; }
+    .cards-container, .cards-container * { visibility: visible; }
+    .cards-container { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+    .id-card:hover { transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrapper">
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-badge">
+      <span>🆔</span>
+      <span>Professional ID System</span>
+    </div>
+    <h1>Mfumo wa Kutengeza<br>Vitambulisho</h1>
+    <p>Piga picha · Jaza taarifa · Tengeneza kitambulisho cha kisasa</p>
+  </header>
+
+  <!-- STEPS -->
+  <div class="steps">
+    <div class="step active" id="step1">
+      <div class="step-icon">📷</div>
+      <div class="step-label">Picha</div>
+    </div>
+    <div class="step" id="step2">
+      <div class="step-icon">📝</div>
+      <div class="step-label">Taarifa</div>
+    </div>
+    <div class="step" id="step3">
+      <div class="step-icon">🆔</div>
+      <div class="step-label">Kitambulisho</div>
+    </div>
+  </div>
+
+  <!-- MAIN GRID -->
+  <div class="main">
+
+    <!-- LEFT: CAMERA -->
+    <div class="panel">
+      <div class="panel-title">
+        <div class="icon">📷</div>
+        <div>
+          <h2>Picha ya Mteja</h2>
+          <p>Piga picha au pakia kutoka kwenye kifaa</p>
+        </div>
+      </div>
+
+      <!-- Camera Area -->
+      <div class="camera-area" id="cameraArea">
+        <video id="videoEl" autoplay playsinline></video>
+        <canvas id="photoCanvas"></canvas>
+        <img id="photoPreview" alt="Picha ya mteja">
+        <div class="camera-placeholder" id="camPlaceholder">
+          <span class="cam-icon">📸</span>
+          <p>Bonyeza <strong>"Fungua Kamera"</strong> kupiga picha<br>au <strong>"Pakia Picha"</strong> kutumia picha uliyonayo</p>
+        </div>
+        <div class="cam-status" id="camStatus">
+          <div class="dot"></div>
+          <span>LIVE</span>
+        </div>
+      </div>
+
+      <!-- Camera Buttons -->
+      <div class="cam-buttons">
+        <button class="btn btn-gold" id="openCamBtn" onclick="openCamera()">
+          📷 Fungua Kamera
+        </button>
+        <button class="btn btn-outline" onclick="document.getElementById('fileInput').click()">
+          📁 Pakia Picha
+        </button>
+        <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="loadFile(event)">
+        <button class="btn btn-gold" id="snapBtn" onclick="takePhoto()" style="display:none">
+          🎯 Piga Picha
+        </button>
+        <button class="btn btn-danger" id="retakeBtn" onclick="retakePhoto()" style="display:none">
+          🔄 Piga Tena
+        </button>
+        <button class="btn btn-success" id="usePhotoBtn" onclick="confirmPhoto()" style="display:none">
+          ✅ Tumia Picha Hii
+        </button>
+      </div>
+
+      <!-- Upload area hint -->
+      <div style="margin-top:14px; padding:12px; background:rgba(212,168,67,0.05); border-radius:10px; border:1px solid rgba(212,168,67,0.1);">
+        <p style="font-size:11px; color:var(--text-muted); line-height:1.6;">
+          💡 <strong style="color:var(--gold-light)">Kidokezo:</strong> Picha nzuri iwe ya uso wazi, mwanga mzuri, na mandhari nyepesi (nyeupe au kijivu).
+        </p>
+      </div>
+    </div>
+
+    <!-- RIGHT: FORM -->
+    <div class="panel">
+      <div class="panel-title">
+        <div class="icon">📝</div>
+        <div>
+          <h2>Taarifa za Mteja</h2>
+          <p>Jaza maelezo yote yanayohitajika</p>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-row">
+          <div class="field">
+            <label>Jina la Kwanza *</label>
+            <input type="text" id="firstName" placeholder="mfano: Amina">
+          </div>
+          <div class="field">
+            <label>Jina la Familia *</label>
+            <input type="text" id="lastName" placeholder="mfano: Hassan">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Nambari ya Kitambulisho *</label>
+          <input type="text" id="idNumber" placeholder="mfano: TZ-2024-001234">
+        </div>
+
+        <div class="form-row">
+          <div class="field">
+            <label>Cheo / Nafasi</label>
+            <input type="text" id="position" placeholder="mfano: Mwalimu Mkuu">
+          </div>
+          <div class="field">
+            <label>Idara / Kitengo</label>
+            <input type="text" id="department" placeholder="mfano: Elimu">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="field">
+            <label>Tarehe ya Kuzaliwa</label>
+            <input type="date" id="dob">
+          </div>
+          <div class="field">
+            <label>Jinsia</label>
+            <select id="gender">
+              <option value="">-- Chagua --</option>
+              <option value="Mme">Mme</option>
+              <option value="Mke">Mke</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Jina la Shirika / Taasisi</label>
+          <input type="text" id="orgName" placeholder="mfano: Wizara ya Elimu">
+        </div>
+
+        <div class="form-row">
+          <div class="field">
+            <label>Tarehe ya Kutolewa</label>
+            <input type="date" id="issueDate">
+          </div>
+          <div class="field">
+            <label>Tarehe ya Kumalizika</label>
+            <input type="date" id="expiryDate">
+          </div>
+        </div>
+
+        <!-- Card Theme -->
+        <div class="field">
+          <label>Rangi ya Kitambulisho</label>
+          <div class="color-picker-row">
+            <div class="color-opt theme-navy selected" data-theme="theme-navy" onclick="selectTheme(this)" title="Navy Blue"></div>
+            <div class="color-opt theme-gold" data-theme="theme-gold" onclick="selectTheme(this)" title="Dhahabu"></div>
+            <div class="color-opt theme-burgundy" data-theme="theme-burgundy" onclick="selectTheme(this)" title="Burgundy"></div>
+            <div class="color-opt theme-forest" data-theme="theme-forest" onclick="selectTheme(this)" title="Msitu"></div>
+            <div class="color-opt theme-slate" data-theme="theme-slate" onclick="selectTheme(this)" title="Slate"></div>
+          </div>
+        </div>
+
+        <!-- Card Type -->
+        <div class="field">
+          <label>Aina ya Kitambulisho</label>
+          <select id="cardType">
+            <option value="KITAMBULISHO">KITAMBULISHO CHA WAFANYAKAZI</option>
+            <option value="MWANACHAMA">KITAMBULISHO CHA MWANACHAMA</option>
+            <option value="MWANAFUNZI">KITAMBULISHO CHA MWANAFUNZI</option>
+            <option value="MGENI">KITAMBULISHO CHA MGENI</option>
+            <option value="MSIMAMIZI">KITAMBULISHO CHA MSIMAMIZI</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="generate-btn" onclick="generateCard()">
+        ✨ Tengeneza Kitambulisho
+      </button>
+    </div>
+
+  </div>
+
+  <!-- PREVIEW SECTION -->
+  <div id="previewSection">
+    <div class="preview-title" style="margin-top:40px;">
+      <h3>✅ Kitambulisho Kimekamilika!</h3>
+      <p>Kitambulisho chako cha kisasa kiko tayari kuprintwa au kupakuliwa</p>
+    </div>
+
+    <div class="cards-container" id="cardsContainer">
+      <!-- Front Card -->
+      <div>
+        <p style="text-align:center; font-size:11px; letter-spacing:2px; color:var(--text-muted); text-transform:uppercase; margin-bottom:10px;">Mbele ya Kitambulisho</p>
+        <div class="id-card" id="frontCard">
+          <div class="card-bg" id="cardBg"></div>
+          <div class="card-noise"></div>
+          <div class="card-content">
+            <div class="card-header">
+              <div class="org-info">
+                <div class="org-logo">🏛️</div>
+                <div>
+                  <div class="org-name" id="cardOrgName">SHIRIKA</div>
+                  <div class="org-sub" id="cardOrgSub">Tanzania · Official</div>
+                </div>
+              </div>
+              <div class="card-type" id="cardTypeLabel">KITAMBULISHO</div>
+            </div>
+            <div class="card-divider"></div>
+            <div class="card-body">
+              <div class="card-photo" id="cardPhotoEl">👤</div>
+              <div class="card-details">
+                <div class="card-name" id="cardNameEl">JINA KAMILI</div>
+                <div class="card-position" id="cardPositionEl">CHEO · IDARA</div>
+                <div class="card-info-row">
+                  <span class="card-info-icon">🆔</span>
+                  <span class="card-info-text" id="cardIdEl">ID: --</span>
+                </div>
+                <div class="card-info-row">
+                  <span class="card-info-icon">📅</span>
+                  <span class="card-info-text" id="cardDobEl">Tarehe ya Kuzaliwa: --</span>
+                </div>
+                <div class="card-info-row">
+                  <span class="card-info-icon">⚥</span>
+                  <span class="card-info-text" id="cardGenderEl">Jinsia: --</span>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer">
+              <div>
+                <div class="card-id-num" id="cardIdNumBottom">--</div>
+                <div class="card-barcode">||| || |||| ||| || ||| ||||</div>
+              </div>
+              <div class="card-validity">
+                <span>HALALI HADI</span>
+                <span id="cardExpiryEl" style="font-size:11px;color:rgba(255,255,255,0.9);font-weight:700;">--</span>
+              </div>
+            </div>
+          </div>
+          <div class="card-hologram"></div>
+        </div>
+      </div>
+
+      <!-- Back Card -->
+      <div>
+        <p style="text-align:center; font-size:11px; letter-spacing:2px; color:var(--text-muted); text-transform:uppercase; margin-bottom:10px;">Nyuma ya Kitambulisho</p>
+        <div class="id-card-back" id="backCard">
+          <div class="card-bg" id="cardBgBack"></div>
+          <div class="card-noise"></div>
+          <div class="back-stripe"></div>
+          <div class="back-content">
+            <div class="back-title">SAINI YA MWENYE KITAMBULISHO</div>
+            <div class="signature-line">
+              <span class="sig-text">Saini</span>
+            </div>
+            <div class="back-info-text">
+              Kitambulisho hiki ni mali ya <span id="backOrgName" style="color:rgba(255,255,255,0.7)">shirika</span>. Ikiwa kitakutwa, tafadhali kirejeshe kwa ofisi ya karibu nawe.
+            </div>
+            <div style="margin-top:8px;">
+              <div style="font-size:9px; color:rgba(255,255,255,0.4); letter-spacing:1px;">TAREHE YA KUTOLEWA</div>
+              <div style="font-size:11px; color:rgba(255,255,255,0.7); font-weight:600;" id="backIssueDateEl">--</div>
+            </div>
+          </div>
+
+          <!-- QR Code (decorative) -->
+          <div class="back-qr" id="qrCode"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <button class="action-btn print" onclick="printCard()">🖨️ Printa Kitambulisho</button>
+      <button class="action-btn download" onclick="downloadCard()">💾 Pakua Picha</button>
+      <button class="action-btn new" onclick="resetAll()">➕ Tengeneza Kingine</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- NOTIFICATION -->
+<div class="notif" id="notif">
+  <span id="notifIcon">✅</span>
+  <span id="notifText">Imefanikiwa!</span>
+</div>
+
+<script>
+  let stream = null;
+  let capturedPhoto = null;
+  let selectedTheme = 'theme-navy';
+  let photoConfirmed = false;
+
+  // ========================
+  // CAMERA FUNCTIONS
+  // ========================
+  async function openCamera() {
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480, facingMode: 'user' } });
+      const video = document.getElementById('videoEl');
+      video.srcObject = stream;
+      video.style.display = 'block';
+      document.getElementById('camPlaceholder').style.display = 'none';
+      document.getElementById('photoPreview').style.display = 'none';
+      document.getElementById('cameraArea').classList.add('active-cam');
+      document.getElementById('camStatus').classList.add('live');
+      document.getElementById('openCamBtn').style.display = 'none';
+      document.getElementById('snapBtn').style.display = 'flex';
+      document.getElementById('retakeBtn').style.display = 'none';
+      document.getElementById('usePhotoBtn').style.display = 'none';
+    } catch(e) {
+      showNotif('❌', 'Imeshindwa kufungua kamera. Ruhusa hairuhusiwi.', 'error');
+    }
+  }
+
+  function takePhoto() {
+    const video = document.getElementById('videoEl');
+    const canvas = document.getElementById('photoCanvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0);
+    capturedPhoto = canvas.toDataURL('image/jpeg', 0.9);
+
+    const preview = document.getElementById('photoPreview');
+    preview.src = capturedPhoto;
+    preview.style.display = 'block';
+    video.style.display = 'none';
+
+    document.getElementById('snapBtn').style.display = 'none';
+    document.getElementById('retakeBtn').style.display = 'flex';
+    document.getElementById('usePhotoBtn').style.display = 'flex';
+    document.getElementById('camStatus').classList.remove('live');
+    document.getElementById('cameraArea').classList.remove('active-cam');
+    document.getElementById('cameraArea').classList.add('has-photo');
+
+    if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+  }
+
+  function retakePhoto() {
+    capturedPhoto = null;
+    photoConfirmed = false;
+    document.getElementById('photoPreview').style.display = 'none';
+    document.getElementById('cameraArea').classList.remove('has-photo');
+    document.getElementById('retakeBtn').style.display = 'none';
+    document.getElementById('usePhotoBtn').style.display = 'none';
+    document.getElementById('snapBtn').style.display = 'none';
+    document.getElementById('openCamBtn').style.display = 'flex';
+    document.getElementById('camPlaceholder').style.display = 'block';
+    updateStep(1);
+  }
+
+  function confirmPhoto() {
+    photoConfirmed = true;
+    document.getElementById('usePhotoBtn').style.display = 'none';
+    document.getElementById('retakeBtn').style.display = 'flex';
+    updateStep(2);
+    showNotif('📸', 'Picha imehifadhiwa! Sasa jaza taarifa za mteja.');
+  }
+
+  function loadFile(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      capturedPhoto = e.target.result;
+      const preview = document.getElementById('photoPreview');
+      preview.src = capturedPhoto;
+      preview.style.display = 'block';
+      document.getElementById('camPlaceholder').style.display = 'none';
+      document.getElementById('cameraArea').classList.add('has-photo');
+      document.getElementById('retakeBtn').style.display = 'flex';
+      document.getElementById('usePhotoBtn').style.display = 'flex';
+      document.getElementById('openCamBtn').style.display = 'none';
+      showNotif('📁', 'Picha imepakiwa kikamilifu!');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // ========================
+  // THEME SELECTION
+  // ========================
+  function selectTheme(el) {
+    document.querySelectorAll('.color-opt').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedTheme = el.dataset.theme;
+  }
+
+  // ========================
+  // STEP TRACKER
+  // ========================
+  function updateStep(n) {
+    for (let i = 1; i <= 3; i++) {
+      const s = document.getElementById('step' + i);
+      s.classList.remove('active', 'done');
+      if (i < n) s.classList.add('done');
+      else if (i === n) s.classList.add('active');
+    }
+  }
+
+  // ========================
+  // GENERATE CARD
+  // ========================
+  function generateCard() {
+    const firstName = document.getElementById('firstName').value.trim();
+    const lastName = document.getElementById('lastName').value.trim();
+    const idNumber = document.getElementById('idNumber').value.trim();
+
+    if (!firstName || !lastName) { showNotif('⚠️', 'Tafadhali weka jina la kwanza na la familia!', 'warn'); return; }
+    if (!idNumber) { showNotif('⚠️', 'Tafadhali weka nambari ya kitambulisho!', 'warn'); return; }
+
+    const position = document.getElementById('position').value || 'Mwanachama';
+    const department = document.getElementById('department').value || '';
+    const dob = document.getElementById('dob').value;
+    const gender = document.getElementById('gender').value;
+    const orgName = document.getElementById('orgName').value || 'SHIRIKA LA TANZANIA';
+    const issueDate = document.getElementById('issueDate').value;
+    const expiryDate = document.getElementById('expiryDate').value;
+    const cardType = document.getElementById('cardType').value;
+
+    // Apply theme
+    const themes = {
+      'theme-navy': 'linear-gradient(135deg, #0B1E3D, #162D55, #0B1E3D)',
+      'theme-gold': 'linear-gradient(135deg, #6B4A00, #D4A843, #8B6914)',
+      'theme-burgundy': 'linear-gradient(135deg, #4A0010, #8B0020, #4A0010)',
+      'theme-forest': 'linear-gradient(135deg, #0D2B1A, #1A5C38, #0D2B1A)',
+      'theme-slate': 'linear-gradient(135deg, #1A1A2E, #16213E, #0F3460)',
+    };
+
+    document.getElementById('cardBg').style.background = themes[selectedTheme];
+    document.getElementById('cardBgBack').style.background = themes[selectedTheme];
+
+    // Fill card data
+    document.getElementById('cardOrgName').textContent = orgName.toUpperCase().substring(0, 20);
+    document.getElementById('cardOrgSub').textContent = 'Tanzania · Official';
+    document.getElementById('cardTypeLabel').textContent = cardType;
+    document.getElementById('cardNameEl').textContent = `${firstName.toUpperCase()} ${lastName.toUpperCase()}`;
+    document.getElementById('cardPositionEl').textContent = department ? `${position} · ${department}` : position;
+    document.getElementById('cardIdEl').textContent = `ID: ${idNumber}`;
+    document.getElementById('cardDobEl').textContent = dob ? `Kuzaliwa: ${formatDate(dob)}` : '';
+    document.getElementById('cardGenderEl').textContent = gender ? `Jinsia: ${gender}` : '';
+    document.getElementById('cardIdNumBottom').textContent = idNumber;
+    document.getElementById('cardExpiryEl').textContent = expiryDate ? formatDate(expiryDate) : '--';
+
+    // Photo
+    const photoEl = document.getElementById('cardPhotoEl');
+    if (capturedPhoto) {
+      photoEl.innerHTML = `<img src="${capturedPhoto}" alt="Picha">`;
+    } else {
+      photoEl.innerHTML = '👤';
+    }
+
+    // Back
+    document.getElementById('backOrgName').textContent = orgName;
+    document.getElementById('backIssueDateEl').textContent = issueDate ? formatDate(issueDate) : new Date().toLocaleDateString('sw-TZ');
+
+    // QR (decorative pixel pattern)
+    generateQR(idNumber);
+
+    // Show preview
+    document.getElementById('previewSection').style.display = 'block';
+    document.getElementById('previewSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    updateStep(3);
+    showNotif('🆔', 'Kitambulisho kimefanikiwa kutengenezwa!');
+  }
+
+  function formatDate(dateStr) {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('sw-TZ', { day:'2-digit', month:'short', year:'numeric' });
+  }
+
+  // Decorative QR
+  function generateQR(seed) {
+    const qr = document.getElementById('qrCode');
+    qr.innerHTML = '';
+    let hash = 0;
+    for (let i = 0; i < seed.length; i++) { hash = ((hash << 5) - hash) + seed.charCodeAt(i); hash |= 0; }
+    for (let i = 0; i < 25; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'qr-cell';
+      const val = (Math.abs(hash * (i+1) * 2654435761) >>> 0) % 2;
+      // Corner markers
+      if ((i < 3 && [0,1,2,5,6,7,10,11,12].includes(i)) || i >= 22) {
+        cell.style.background = '#111';
+      } else {
+        cell.style.background = val ? '#111' : 'white';
+      }
+      qr.appendChild(cell);
+    }
+  }
+
+  // ========================
+  // PRINT
+  // ========================
+  function printCard() {
+    window.print();
+  }
+
+  // ========================
+  // DOWNLOAD (canvas)
+  // ========================
+  async function downloadCard() {
+    showNotif('💾', 'Inapakuliwa...');
+    // Simple approach: open print dialog focused on card
+    const card = document.getElementById('frontCard');
+    const html2canvas = window.html2canvas;
+
+    // Fallback: just trigger print
+    window.print();
+  }
+
+  // ========================
+  // RESET
+  // ========================
+  function resetAll() {
+    capturedPhoto = null;
+    photoConfirmed = false;
+    if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+
+    document.getElementById('videoEl').style.display = 'none';
+    document.getElementById('photoPreview').style.display = 'none';
+    document.getElementById('camPlaceholder').style.display = 'block';
+    document.getElementById('cameraArea').className = 'camera-area';
+    document.getElementById('openCamBtn').style.display = 'flex';
+    document.getElementById('snapBtn').style.display = 'none';
+    document.getElementById('retakeBtn').style.display = 'none';
+    document.getElementById('usePhotoBtn').style.display = 'none';
+    document.getElementById('camStatus').classList.remove('live');
+
+    // Reset form
+    ['firstName','lastName','idNumber','position','department','dob','gender','orgName','issueDate','expiryDate'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    document.getElementById('cardType').value = 'KITAMBULISHO';
+
+    document.getElementById('previewSection').style.display = 'none';
+    updateStep(1);
+
+    // Reset theme
+    document.querySelectorAll('.color-opt').forEach(c => c.classList.remove('selected'));
+    document.querySelector('[data-theme="theme-navy"]').classList.add('selected');
+    selectedTheme = 'theme-navy';
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    showNotif('✨', 'Umesafisha mfumo! Unaweza kuanza upya.');
+  }
+
+  // ========================
+  // NOTIFICATION
+  // ========================
+  function showNotif(icon, text, type) {
+    const n = document.getElementById('notif');
+    document.getElementById('notifIcon').textContent = icon;
+    document.getElementById('notifText').textContent = text;
+    n.style.background = type === 'error' ? 'linear-gradient(135deg,#C0392B,#922B21)'
+      : type === 'warn' ? 'linear-gradient(135deg,#D4A843,#B8860B)'
+      : 'linear-gradient(135deg,#27AE60,#1E8449)';
+    n.classList.add('show');
+    setTimeout(() => n.classList.remove('show'), 3500);
+  }
+
+  // Set default dates
+  window.onload = () => {
+    const today = new Date().toISOString().split('T')[0];
+    const nextYear = new Date(Date.now() + 365*24*60*60*1000).toISOString().split('T')[0];
+    document.getElementById('issueDate').value = today;
+    document.getElementById('expiryDate').value = nextYear;
+  };
+</script>
+</body>
+</html>
